@@ -24,12 +24,12 @@ class TestUrls(SimpleTestCase):
 
 
 class TestContactListCreateView(APITestCase):
+    contacts_url = reverse("contacts")
+
     def setUp(self):
         user_details = {
             "username": "testuser",
             "email": "testuser@gmail.com",
-            "firstname": "test",
-            "lastname": "user",
             "password": "12345",
         }
         self.user = User.objects.create(**user_details)
@@ -39,7 +39,13 @@ class TestContactListCreateView(APITestCase):
             algorithm=settings.ALGORITHM,
         )
 
-        self.client.force_authenticate(user=self.user)
+        self.client.credentials(HTTP_AUTHORIZATION=f"Bearer {self.token}")
 
-    def test_create_contact(self):
-        pass
+    def test_get_contacts_authenticated(self):
+        response = self.client.get(self.contacts_url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_get_contacts_unauthenticated(self):
+        self.client.force_authenticate(user=None, token=None)
+        response = self.client.get(self.contacts_url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
