@@ -2,10 +2,11 @@ from rest_framework.generics import ListCreateAPIView, RetrieveUpdateDestroyAPIV
 from .models import Contact
 from .serializers import ContactSerializer
 from rest_framework import permissions
+
 # Create your views here.
 
 
-class ContactListView(ListCreateAPIView):
+class ContactListCreateView(ListCreateAPIView):
     serializer_class = ContactSerializer
     permission_classes = (permissions.IsAuthenticated,)
 

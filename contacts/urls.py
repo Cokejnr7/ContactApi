@@ -1,6 +1,7 @@
 from django.urls import path
-from .views import ContactListView, ContactDetailView
+from .views import ContactListCreateView, ContactDetailView
+
 urlpatterns = [
-    path('', ContactListView.as_view()),
-    path('<int:id>', ContactDetailView.as_view())
+    path("", ContactListCreateView.as_view(), name="contacts"),
+    path("<int:id>", ContactDetailView.as_view(), name="contact"),
 ]
