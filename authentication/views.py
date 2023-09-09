@@ -10,15 +10,12 @@ import jwt
 
 
 class RegisterView(GenericAPIView):
-
     serializer_class = UserSerailizer
 
     def post(self, request):
-
         serializer = UserSerailizer(data=request.data)
 
         if serializer.is_valid():
-
             serializer.save()
 
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -30,24 +27,27 @@ class LoginView(GenericAPIView):
     serializer_class = LoginSerializer
 
     def post(self, request):
-
         data = request.data
 
-        username = data.get('username', '')
+        username = data.get("username", "")
 
-        password = data.get('password', '')
+        password = data.get("password", "")
 
         user = authenticate(username=username, password=password)
 
         if user:
-
             auth_token = jwt.encode(
-                {'username': user.username}, settings.JWT_SECRET_KEY, algorithm="HS256")
+                {"username": user.username},
+                settings.JWT_SECRET_KEY,
+                algorithm=settings.ALGORITHM,
+            )
 
             serializer = UserSerailizer(user)
 
-            data = {'user': serializer.data, 'token': auth_token}
+            data = {"user": serializer.data, "token": auth_token}
 
             return Response(data, status=status.HTTP_200_OK)
 
-        return Response({'details': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        return Response(
+            {"details": "Invalid credentials"}, status=status.HTTP_401_UNAUTHORIZED
+        )

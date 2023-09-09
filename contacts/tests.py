@@ -1,8 +1,12 @@
 from django.test import SimpleTestCase
 from django.urls import resolve, reverse
-from .views import ContactListCreateView, ContactDetailView
-from rest_framework.test import APITestCase
+from django.conf import settings
 from django.contrib.auth import get_user_model
+from rest_framework.test import APITestCase
+from rest_framework import status
+from .views import ContactListCreateView, ContactDetailView
+import jwt
+
 
 # Create your tests here.
 
@@ -29,6 +33,11 @@ class TestContactListCreateView(APITestCase):
             "password": "12345",
         }
         self.user = User.objects.create(**user_details)
+        self.token = jwt.encode(
+            {"username": self.user.username},
+            settings.JWT_SECRET_KEY,
+            algorithm=settings.ALGORITHM,
+        )
 
         self.client.force_authenticate(user=self.user)
 
